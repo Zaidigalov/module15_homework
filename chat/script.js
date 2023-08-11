@@ -1,11 +1,10 @@
-const buttonSend = document.querySelector(".write__button_send");
-const buttonGeo = document.querySelector(".write__button_geo");
-const chatWindow = document.querySelector(".chat__window");
-const input = document.querySelector(".write__input");
-const url = "wss://echo-ws-service.herokuapp.com";
-//const url = "wss://echo.websocket.events";
+const buttonSend = document.querySelector(".write__button_send"),
+  buttonGeo = document.querySelector(".write__button_geo"),
+  chatWindow = document.querySelector(".chat__window"),
+  input = document.querySelector(".write__input"),
+  url = "wss://echo-ws-service.herokuapp.com";
 
-let websoket;
+let webSoket;
 let message;
 let myPosition;
 let messageBox;
@@ -25,18 +24,28 @@ function writeHisMessage(message) {
   chatWindow.appendChild(messageBox);
 }
 
+function initializeWebSocket() {
+  webSocket = new WebSocket(url);
+
+  webSocket.onopen = () => {
+    console.log("WebSocket connection opened");
+  };
+}
+
+window.onload = initializeWebSocket;
+
 buttonSend.addEventListener("click", () => {
   message = input.value;
 
-  websoket = new WebSocket(url);
-
   writeMyMessage("Вы: " + message);
 
-  websoket.send(message);
+  webSocket.send(message);
 
-  websoket.onmessage = function (e) {
+  webSocket.onmessage = function (e) {
     writeHisMessage("Эхо: " + e.data);
   };
+
+  input.value = "";
 });
 
 function writeMyGeo() {
@@ -65,5 +74,3 @@ buttonGeo.addEventListener("click", () => {
     });
   }
 });
-
-//Не удается подключиться к серверу даже с VPN.
